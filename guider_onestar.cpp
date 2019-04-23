@@ -235,10 +235,21 @@ bool GuiderOneStar::GetMassChangeThresholdEnabled() const
     return m_massChangeThresholdEnabled;
 }
 
+bool GuiderOneStar::GetGuideOnSlitEnabled() const
+{
+    return m_guideOnSlitEnabled;
+}
+
 void GuiderOneStar::SetMassChangeThresholdEnabled(bool enable)
 {
     m_massChangeThresholdEnabled = enable;
     pConfig->Profile.SetBoolean("/guider/onestar/MassChangeThresholdEnabled", enable);
+}
+
+void GuiderOneStar::SetGuideOnSlitEnabled(bool enable)
+{
+    m_guideOnSlitEnabled = enable;
+    pConfig->Profile.SetBoolean("/guider/onestar/guideOnSlitEnabled", enable);
 }
 
 double GuiderOneStar::GetMassChangeThreshold() const
@@ -1067,8 +1078,13 @@ GuiderOneStarConfigDialogCtrlSet::GuiderOneStarConfigDialogCtrlSet(wxWindow *pPa
     m_pEnableStarMassChangeThresh = new wxCheckBox(GetParentWindow(AD_szStarTracking), STAR_MASS_ENABLE, _("Enable"));
     m_pEnableStarMassChangeThresh->SetToolTip(_("Check to enable star mass change detection. When enabled, "
         "PHD skips frames when the guide star mass changes by an amount greater than the setting for 'tolerance'."));
+    
+    m_pEnableGuideOnSlit = new wxCheckBox(GetParentWindow(AD_szStarTracking), GUIDE_ON_SLIT, _("Don't Stop guiding when lost\nEnable"));
+    m_pEnableGuideOnSlit->SetToolTip(_("Check to guide on a slit. When enabled, "
+        "PHD continue to guide even if star disappear."));
 
     GetParentWindow(AD_szStarTracking)->Bind(wxEVT_COMMAND_CHECKBOX_CLICKED, &GuiderOneStarConfigDialogCtrlSet::OnStarMassEnableChecked, this, STAR_MASS_ENABLE);
+    GetParentWindow(AD_szStarTracking)->Bind(wxEVT_COMMAND_CHECKBOX_CLICKED, &GuiderOneStarConfigDialogCtrlSet::OnGuideOnSlitChecked, this, GUIDE_ON_SLIT);
 
     width = StringWidth(_T("100.0"));
     m_pMassChangeThreshold = pFrame->MakeSpinCtrlDouble(pParent, wxID_ANY, wxEmptyString, wxDefaultPosition,
@@ -1080,6 +1096,7 @@ GuiderOneStarConfigDialogCtrlSet::GuiderOneStarConfigDialogCtrlSet(wxWindow *pPa
         "If star mass change detection is not enabled then this setting is ignored."));
     pStarMass->Add(m_pEnableStarMassChangeThresh, wxSizerFlags(0).Border(wxTOP, 3));
     pStarMass->Add(pTolerance, wxSizerFlags(0).Border(wxLEFT, 40));
+    pStarMass->Add(m_pEnableGuideOnSlit, wxSizerFlags(0).Border(wxTOP, 3));
 
     wxWindow *parent = GetParentWindow(AD_szStarTracking);
     width = StringWidth(_("65535"));
@@ -1131,3 +1148,10 @@ void GuiderOneStarConfigDialogCtrlSet::OnStarMassEnableChecked(wxCommandEvent& e
 {
     m_pMassChangeThreshold->Enable(event.IsChecked());
 }
+
+void GuiderOneStarConfigDialogCtrlSet::OnGuideOnSlitChecked(wxCommandEvent& event)
+{
+    m_pEnableGuideOnSlit->Enable(event.IsChecked());
+}
+
+

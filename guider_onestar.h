@@ -54,12 +54,14 @@ public:
     GuiderOneStar *m_pGuiderOneStar;
     wxSpinCtrl *m_pSearchRegion;
     wxCheckBox *m_pEnableStarMassChangeThresh;
+    wxCheckBox *m_pEnableGuideOnSlit;
     wxSpinCtrlDouble *m_pMassChangeThreshold;
     wxSpinCtrlDouble *m_MinHFD;
 
     virtual void LoadValues();
     virtual void UnloadValues();
     void OnStarMassEnableChecked(wxCommandEvent& event);
+    void OnGuideOnSlitChecked(wxCommandEvent& event);
 };
 
 class GuiderOneStar : public Guider
@@ -70,6 +72,7 @@ private:
 
     // parameters
     bool m_massChangeThresholdEnabled;
+    bool m_guideOnSlitEnabled ;
     double m_massChangeThreshold;
     bool m_tolerateJumpsEnabled;
     double m_tolerateJumpsThreshold;
@@ -89,8 +92,11 @@ public:
     };
 
     bool GetMassChangeThresholdEnabled() const;
-    void SetMassChangeThresholdEnabled(bool enable);
     double GetMassChangeThreshold() const;
+    bool GetGuideOnSlitEnabled() const;
+    void SetMassChangeThresholdEnabled(bool enable);
+    void SetGuideOnSlitEnabled(bool enable);
+    
     bool SetMassChangeThreshold(double starMassChangeThreshold);
     bool SetTolerateJumps(bool enable, double threshold);
     bool SetSearchRegion(int searchRegion);
